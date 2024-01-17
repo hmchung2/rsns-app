@@ -65,7 +65,6 @@ const PostImage = styled.Image`
 `;
 export default function Rooms() {
   const noDataImgSrc = require("../assets/noData.png");
-  console.log("see room 1 : ");
   const { data: chatData, loading: chatLoading } = useQuery(SEE_ROOMS_QUERY, {
     fetchPolicy: "network-only",
   });

@@ -47,7 +47,7 @@ export default function TabsNav() {
             // Prevent the default action (which would be opening the EmptyScreen)
             event.preventDefault();
             // Navigate to the desired screen instead
-            navigation.navigate("StackMessagesNav");
+            navigation.navigate("MessagesNav");
           },
         })}
         options={{
