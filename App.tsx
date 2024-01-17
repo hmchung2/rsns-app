@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Appearance, ColorSchemeName, SafeAreaView, ScrollView, StatusBar, StyleSheet, useColorScheme, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import client, { colorModeVar, isLoggedInVar, tokenVar } from "./apollo.tsx";
+import client, { colorModeVar, isLoggedInVar, logUserOut, tokenVar } from "./apollo.tsx";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
 import { ThemeProvider } from "styled-components/native";
 import { darkTheme, lightTheme } from "./styles/themes.ts";
@@ -20,20 +20,22 @@ function App(): React.JSX.Element | null {
 
   const preload = async () : Promise<Boolean> => {
     const token = await AsyncStorage.getItem("token");
+    // const token = false; // if you want to force log out
     if (token) {
       isLoggedInVar(true);
       tokenVar(token);
-      return true;
+      return false;
+    }else{
+      tokenVar("");
+      isLoggedInVar(false);
+      // logUserOut().catch(error => console.log(error));
     }
     return false;
   };
 
-
   useEffect(() => {
+    console.log(isLoggedIn);
     preload().then((loggedIn)=>{
-      if(!loggedIn){
-        console.log("not logged in")
-      }
       const colorSchemeName: ColorSchemeName = Appearance.getColorScheme();
       colorModeVar(colorSchemeName === "light" ? "light" : "dark");
       setReady(true);
@@ -51,11 +53,6 @@ function App(): React.JSX.Element | null {
   }, [colorMode]);
 
 
-  if (!ready) {
-    // return error page here
-    return null;
-  }
-
   const MyTheme = {
     ...DefaultTheme,
     colors: {
@@ -64,6 +61,10 @@ function App(): React.JSX.Element | null {
     },
   };
 
+  if (!ready) {
+    // return error page here
+    return null;
+  }
 
   return (
     <ApolloProvider client={client}>
